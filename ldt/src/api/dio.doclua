@@ -1,0 +1,988 @@
+-------------------------------------------------------------------------------
+-- Diorama API.
+-- Everything Diorama! 
+-- @module dio
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Block API.
+-- Available in client. 
+-- @field[parent = #dio] dio#blocks blocks
+
+--------------------------------------------------------------------------------
+-- Create new definition ID.
+-- Todo: Long description
+--
+-- @function [parent=#blocks] createNewDefinitionId
+-- @return Unknown
+
+--------------------------------------------------------------------------------
+-- Set definition.
+-- Todo: Long description
+--
+-- @function [parent=#blocks] setDefinition
+-- @param #table definitionTable Definition table
+-- @return Unknown
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Client Chat API.
+-- Available in client. 
+-- @field[parent = #dio] dio#clientChat clientChat
+
+--------------------------------------------------------------------------------
+-- Client send chat message.
+-- Todo: Long description
+--
+-- @function [parent=#clientChat] send
+-- @param #string message Message
+-- @return Unknown
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Drawing API.
+-- Available in menus, client and server. 
+-- @field[parent = #dio] dio#drawing drawing
+
+--------------------------------------------------------------------------------
+-- Create render to texture.
+-- Todo: Long description
+--
+-- @function [parent=#drawing] createRenderToTexture
+-- @param #number w Texture width
+-- @param #number h Texture height
+-- @return Unknown
+
+--------------------------------------------------------------------------------
+-- Set render to texture.
+-- Todo: Long description
+--
+-- @function [parent=#drawing] setRenderToTexture
+-- @param #number renderToTexture Render to texture ID
+-- @return Unknown
+
+--------------------------------------------------------------------------------
+-- Add render pass before.
+-- Todo: Long description
+--
+-- @function [parent=#drawing] addRenderPassBefore
+-- @param #number order Render order
+-- @param #table callback Render function to call
+-- @return Unknown
+
+--------------------------------------------------------------------------------
+-- Add render pass after.
+-- Todo: Long description
+--
+-- @function [parent=#drawing] addRenderPassAfter
+-- @param #number order Render order
+-- @param #table callback Render function to call
+-- @return Unknown
+
+--------------------------------------------------------------------------------
+-- Get window size.
+-- Todo: Long description
+--
+-- @function [parent=#drawing] getWindowSize
+-- @return #number, #number Returns width and height
+
+--------------------------------------------------------------------------------
+-- Draw render to texture.
+-- Todo: Long description
+--
+-- @function [parent=#drawing] drawTexture
+-- @param #number renderToTexture Render to texture ID
+-- @param #number x X position
+-- @param #number y Y position
+-- @param #number w Texture width
+-- @param #number h Texture height
+-- @param #number rgba RGBA color (0xDEADBEEF)
+-- @return Unknown
+
+
+--------------------------------------------------------------------------------
+-- Diorama Font API.
+-- Child of Drawing API. Available in menus, client and server. 
+-- @field[parent = #drawing] dio#font font
+
+--------------------------------------------------------------------------------
+-- Render a colored box with alpha.
+-- Todo: Long description
+--
+-- @function [parent=#font] drawBox
+-- @param #number x X position
+-- @param #number y Y position
+-- @param #number w Box width
+-- @param #number h Box height
+-- @param #number rgba RGBA color (0xDEADBEEF)
+-- @return Unknown
+
+--------------------------------------------------------------------------------
+-- Render a string.
+-- Todo: Long description
+--
+-- @function [parent=#font] drawString
+-- @param #number x X position
+-- @param #number y Y position
+-- @param #string text Text to be rendered
+-- @param #number rgba RGBA color (0xDEADBEEF)
+-- @return Unknown
+
+--------------------------------------------------------------------------------
+-- Get string length in pixels.
+-- Todo: Long description
+--
+-- @function [parent=#font] measureString
+-- @param #string text Text to measure
+-- @return #number Text length in pixels.
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Event API.
+-- Available in menus, client and server. 
+-- @field[parent = #dio] dio#events events
+
+
+--------------------------------------------------------------------------------
+-- Diorama Event Types.
+-- Child of Event API. Available in menus, client and server. 
+-- @field[parent = #events] dio#types types
+
+--------------------------------------------------------------------------------
+-- Client chat message received.
+-- Occurs when a chat message is received by the client. 
+-- 
+-- Callback function
+-- -----------
+--
+-- `callback (author, message)`
+-- 
+--
+-- #### Parameters
+--
+-- **author [string]**
+-- 
+-- * Author of the message. 
+-- * Does not have to be a player name.
+-- * Can be empty string.
+-- * Will not be nil.
+--
+-- **message [string]**
+-- 
+-- * The message.
+-- * Can be an empty string.
+-- * Will not be nil.
+--
+--
+-- #### Return values
+-- **none**
+-- @field[parent = #types] CLIENT_CHAT_MESSAGE_RECEIVED
+
+--------------------------------------------------------------------------------
+-- Client key clicked.
+-- Occurs when a client key has been clicked. The keycode this event provides can be checked against the [GLFW keycodes](http://www.glfw.org/docs/latest/group__keys.html) to determine the key that has been clicked. 
+-- 
+-- Callback function
+-- -----------
+--
+-- `callback (keyCode, keyCharacter, keyModifier)`
+-- 
+--
+-- #### Parameters
+--
+-- **keyCode [number]**
+-- 
+-- * A value from dio.inputs.keyCodes representing the physical key pressed. To map a [GLFW key code](http://www.glfw.org/docs/latest/group__keys.html) to Diorama keycode remove the GLFW_KEY_ prefix. i.e. GLFW_KEY_F12 becomes F12.
+-- * Will not be nil.
+--
+-- **keyCharacter [string]**
+-- 
+-- * A string representing the printable key pressed, if available.
+-- * Can be nil - when the keyCode does not map to a regular character. Examples are ESCAPE, LEFT_SHIFT, PAGE_UP etc...
+--
+-- **keyModifier [bitfield]**
+-- 
+-- * TBD
+--
+--
+-- #### Return values
+-- **bool**
+-- 
+-- Return truthy to consume the event.
+-- @field[parent = #types] CLIENT_CHAT_MESSAGE_RECEIVED
+
+--------------------------------------------------------------------------------
+-- Window focus lost.
+-- Occurs when the game window has lost focus.
+-- @field[parent = #types] CLIENT_WINDOW_FOCUS_LOST
+
+--------------------------------------------------------------------------------
+-- Other client connected.
+-- Occurs when another player connects to the same server the client is on. 
+-- If other players are on the server before the client connected, this event created for the client for every other player. 
+-- This means that when connecting to the server, this event may be created multiple times.
+-- @field[parent = #types] CLIENT_OTHER_CLIENT_CONNECTED
+
+--------------------------------------------------------------------------------
+-- Other client disconnected.
+-- Occurs when another player on the same server as the client disconnects.
+-- @field[parent = #types] CLIENT_OTHER_CLIENT_DISCONNECTED
+
+--------------------------------------------------------------------------------
+-- Chat message pre sent.
+-- Occurs when the client attempts to send a chat message, before it is sent to the server. 
+-- This can be used to swallow chat commands so they are not sent to the server.
+-- @field[parent = #types] CLIENT_CHAT_MESSAGE_PRE_SENT
+
+--------------------------------------------------------------------------------
+-- Client updated.
+-- Todo: Long description
+-- @field[parent = #types] CLIENT_UPDATED
+
+--------------------------------------------------------------------------------
+-- Application shutdown.
+-- Todo: Long description
+-- @field[parent = #types] CLIENT_APPLICATION_SHUTDOWN
+
+--------------------------------------------------------------------------------
+-- Session shutdown begun.
+-- Todo: Long description
+-- @field[parent = #types] CLIENT_SESSION_SHUTDOWN_BEGUN
+
+--------------------------------------------------------------------------------
+-- Session shutdown completed.
+-- Todo: Long description
+-- @field[parent = #types] CLIENT_SESSION_SHUTDOWN_COMPLETED
+
+--------------------------------------------------------------------------------
+-- Session started.
+-- Todo: Long description
+-- @field[parent = #types] CLIENT_SESSION_STARTED
+
+
+--------------------------------------------------------------------------------
+-- Player load.
+-- Cannot be consumed. Called per player when any player joins the server.
+-- @field[parent = #types] SERVER_PLAYER_LOAD
+
+--------------------------------------------------------------------------------
+-- Player save.
+-- Cannot be consumed. Called per player when any player leaves the server, or the server shuts down.
+-- @field[parent = #types] SERVER_PLAYER_SAVE
+
+--------------------------------------------------------------------------------
+-- Entity placed.
+-- Can be consumed. Called when any entity or block is placed.
+-- @field[parent = #types] SERVER_ENTITY_PLACED
+
+--------------------------------------------------------------------------------
+-- Entity destroyed.
+-- Can be consumed. Called when any entity or block is destroyed.
+-- @field[parent = #types] SERVER_ENTITY_DESTROYED
+
+--------------------------------------------------------------------------------
+-- Server received chat message.
+-- Can be consumed. Called everytime a client chat message is received.
+-- @field[parent = #types] SERVER_CHAT_RECEIVED
+
+
+--------------------------------------------------------------------------------
+-- Add event listener.
+-- Todo: Long description
+--
+-- @function [parent=#events] addListener
+-- @param #types types Event types
+-- @param #table callback Callback function
+-- @return Unknown.
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama File API.
+-- Available in menus and server. 
+-- @field[parent = #dio] dio#file file
+
+--------------------------------------------------------------------------------
+-- Check if world folder exists.
+-- Todo: Long description
+--
+-- @function [parent=#file] isExistingWorldFolder
+-- @param #string path Path to world folder
+-- @return #boolean True if exists, false if doesn't.
+
+--------------------------------------------------------------------------------
+-- Delete world.
+-- Todo: Long description
+--
+-- @function [parent=#file] deleteWorld
+-- @param #string path Path to world folder
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- List existing worlds.
+-- Todo: Long description
+--
+-- @function [parent=#file] listExistingWorlds
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Load lua.
+-- Todo: Long description
+--
+-- @function [parent=#file] loadlua
+-- @param #string filename Lua filename
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Save lua.
+-- Todo: Long description
+--
+-- @function [parent=#file] saveLua
+-- @param #string filename Lua filename
+-- @return Unknown.
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Input API.
+-- Available in menus and client. 
+-- @field[parent = #dio] dio#inputs inputs
+
+--------------------------------------------------------------------------------
+-- Set fov (temporary hacky version).
+-- Todo: Long description
+--
+-- @function [parent=#inputs] hackSetFov
+-- @param #number number Fov angle
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Get fov (temporary hacky version).
+-- Todo: Long description
+--
+-- @function [parent=#inputs] hackGetFov
+-- @return #number Fov angle
+
+--------------------------------------------------------------------------------
+-- Set are playing controls enabled.
+-- Todo: Long description
+--
+-- @function [parent=#inputs] setArePlayingControlsEnabled
+-- @param #boolean bool Is enabled
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Set exclusive keys.
+-- Todo: Long description
+--
+-- @function [parent=#inputs] setExclusiveKeys
+-- @param #boolean bool Is exclusive
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Set player block ID.
+-- Todo: Long description
+--
+-- @function [parent=#inputs] setPlayerBlockId
+-- @param #number playerIdx Player index
+-- @param #number blockId Block ID
+-- @return Unknown.
+
+
+--------------------------------------------------------------------------------
+-- Diorama Key Codes.
+-- Child of Input API. Available in menus and client.
+-- @field[parent = #inputs] dio#keyCodes keyCodes
+
+---
+-- @field[parent = #keyCodes] UNKNOWN
+
+---
+-- @field[parent = #keyCodes] SPACE 
+
+---
+-- @field[parent = #keyCodes] APOSTROPHE 
+
+---
+-- @field[parent = #keyCodes] COMMA 
+
+---
+-- @field[parent = #keyCodes] MINUS 
+
+---
+-- @field[parent = #keyCodes] PERIOD 
+
+--- 
+-- @field[parent = #keyCodes] SLASH 
+
+---
+-- @field[parent = #keyCodes] 0
+
+---
+-- @field[parent = #keyCodes] 1
+
+---
+-- @field[parent = #keyCodes] 2
+
+---
+-- @field[parent = #keyCodes] 3
+
+---
+-- @field[parent = #keyCodes] 4
+
+---
+-- @field[parent = #keyCodes] 5
+
+---
+-- @field[parent = #keyCodes] 6
+
+---
+-- @field[parent = #keyCodes] 7
+
+---
+-- @field[parent = #keyCodes] 8
+
+---
+-- @field[parent = #keyCodes] 9
+
+---
+-- @field[parent = #keyCodes] SEMICOLON 
+
+---
+-- @field[parent = #keyCodes] EQUAL
+
+---
+-- @field[parent = #keyCodes] A
+
+---
+-- @field[parent = #keyCodes] B
+
+---
+-- @field[parent = #keyCodes] C
+
+---
+-- @field[parent = #keyCodes] D
+
+---
+-- @field[parent = #keyCodes] E
+
+---
+-- @field[parent = #keyCodes] F
+
+---
+-- @field[parent = #keyCodes] G
+
+---
+-- @field[parent = #keyCodes] H
+
+---
+-- @field[parent = #keyCodes] I
+
+---
+-- @field[parent = #keyCodes] J
+
+---
+-- @field[parent = #keyCodes] K
+
+---
+-- @field[parent = #keyCodes] L
+
+---
+-- @field[parent = #keyCodes] M
+
+---
+-- @field[parent = #keyCodes] N
+
+---
+-- @field[parent = #keyCodes] O
+
+---
+-- @field[parent = #keyCodes] P
+
+---
+-- @field[parent = #keyCodes] Q
+
+---
+-- @field[parent = #keyCodes] R
+
+---
+-- @field[parent = #keyCodes] S
+
+---
+-- @field[parent = #keyCodes] T
+
+---
+-- @field[parent = #keyCodes] U
+
+---
+-- @field[parent = #keyCodes] V
+
+---
+-- @field[parent = #keyCodes] W
+
+---
+-- @field[parent = #keyCodes] X
+
+---
+-- @field[parent = #keyCodes] Y
+
+---
+-- @field[parent = #keyCodes] Z
+
+---
+-- @field[parent = #keyCodes] LEFT_BRACKET 
+
+---
+-- @field[parent = #keyCodes] BACKSLASH
+
+---
+-- @field[parent = #keyCodes] RIGHT_BRACKET 
+
+---
+-- @field[parent = #keyCodes] GRAVE_ACCENT
+
+---
+-- @field[parent = #keyCodes] WORLD_1
+
+---
+-- @field[parent = #keyCodes] WORLD_2
+
+---
+-- @field[parent = #keyCodes] ESCAPE 
+
+---
+-- @field[parent = #keyCodes] ENTER 
+
+---
+-- @field[parent = #keyCodes] TAB 
+
+---
+-- @field[parent = #keyCodes] BACKSPACE
+
+---
+-- @field[parent = #keyCodes] INSERT 
+
+---
+-- @field[parent = #keyCodes] DELETE 
+
+---
+-- @field[parent = #keyCodes] RIGHT 
+
+---
+-- @field[parent = #keyCodes] LEFT
+
+---
+-- @field[parent = #keyCodes] DOWN 
+
+---
+-- @field[parent = #keyCodes] UP
+
+---
+-- @field[parent = #keyCodes] PAGE_UP 
+
+---
+-- @field[parent = #keyCodes] PAGE_DOWN 
+
+---
+-- @field[parent = #keyCodes] HOME 
+
+---
+-- @field[parent = #keyCodes] END
+
+---
+-- @field[parent = #keyCodes] CAPS_LOCK 
+
+---
+-- @field[parent = #keyCodes] SCROLL_LOCK 
+
+---
+-- @field[parent = #keyCodes] NUM_LOCK
+
+---
+-- @field[parent = #keyCodes] PRINT_SCREEN
+
+---
+-- @field[parent = #keyCodes] PAUSE
+
+---
+-- @field[parent = #keyCodes] F1 
+
+---
+-- @field[parent = #keyCodes] F2 
+
+---
+-- @field[parent = #keyCodes] F3 
+
+---
+-- @field[parent = #keyCodes] F4 
+
+---
+-- @field[parent = #keyCodes] F5 
+
+---
+-- @field[parent = #keyCodes] F6
+
+---
+-- @field[parent = #keyCodes] F7
+
+---
+-- @field[parent = #keyCodes] F8
+
+---
+-- @field[parent = #keyCodes] F9 
+
+---
+-- @field[parent = #keyCodes] F10 
+
+---
+-- @field[parent = #keyCodes] F11
+
+---
+-- @field[parent = #keyCodes] F12
+
+---
+-- @field[parent = #keyCodes] F13 
+
+---
+-- @field[parent = #keyCodes] F14 
+
+---
+-- @field[parent = #keyCodes] F15 
+
+---
+-- @field[parent = #keyCodes] F16
+
+---
+-- @field[parent = #keyCodes] F17 
+
+---
+-- @field[parent = #keyCodes] F18 
+
+---
+-- @field[parent = #keyCodes] F19 
+
+---
+-- @field[parent = #keyCodes] F20 
+
+---
+-- @field[parent = #keyCodes] F21 
+
+---
+-- @field[parent = #keyCodes] F22
+
+---
+-- @field[parent = #keyCodes] F23 
+
+---
+-- @field[parent = #keyCodes] F24 
+
+---
+-- @field[parent = #keyCodes] F25
+
+---
+-- @field[parent = #keyCodes] KP_0
+
+---
+-- @field[parent = #keyCodes] KP_1
+
+---
+-- @field[parent = #keyCodes] KP_2 
+
+---
+-- @field[parent = #keyCodes] KP_3 
+
+---
+-- @field[parent = #keyCodes] KP_4
+
+---
+-- @field[parent = #keyCodes] KP_5 
+
+---
+-- @field[parent = #keyCodes] KP_6
+
+---
+-- @field[parent = #keyCodes] KP_7 
+
+---
+-- @field[parent = #keyCodes] KP_8 
+
+---
+-- @field[parent = #keyCodes] KP_9 
+
+---
+-- @field[parent = #keyCodes] KP_DECIMAL 
+
+---
+-- @field[parent = #keyCodes] KP_DIVIDE 
+
+---
+-- @field[parent = #keyCodes] KP_MULTIPLY
+
+---
+-- @field[parent = #keyCodes] KP_SUBTRACT 
+
+---
+-- @field[parent = #keyCodes] KP_ADD 
+
+---
+-- @field[parent = #keyCodes] KP_ENTER 
+
+---
+-- @field[parent = #keyCodes] KP_EQUAL
+
+---
+-- @field[parent = #keyCodes] LEFT_SHIFT 
+
+---
+-- @field[parent = #keyCodes] LEFT_CONTROL
+
+---
+-- @field[parent = #keyCodes] LEFT_ALT
+
+---
+-- @field[parent = #keyCodes] LEFT_SUPER 
+
+---
+-- @field[parent = #keyCodes] RIGHT_SHIFT
+
+---
+-- @field[parent = #keyCodes] RIGHT_CONTROL 
+
+---
+-- @field[parent = #keyCodes] RIGHT_ALT
+
+---
+-- @field[parent = #keyCodes] RIGHT_SUPER 
+
+---
+-- @field[parent = #keyCodes] MENU
+
+
+--------------------------------------------------------------------------------
+-- Diorama Binding Types.
+-- Child of Input API. Available in menus and client.
+-- @field[parent = #inputs] dio#bindingTypes bindingTypes
+
+
+--------------------------------------------------------------------------------
+-- Diorama Bindings.
+-- Child of Input API. Available in menus and client.
+-- @field[parent = #inputs] dio#bindings bindings
+
+--------------------------------------------------------------------------------
+-- Set key binding.
+-- Todo: Long description
+--
+-- @function [parent=#bindings] setKeyBinding
+-- @param #bindingTypes bindingTypes Binding type
+-- @param #keyCodes keyCode Key code
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Get key binding.
+-- Todo: Long description
+--
+-- @function [parent=#bindings] getKeyBinding
+-- @param #bindingTypes bindingTypes Binding type
+-- @return Unknown.
+
+
+--------------------------------------------------------------------------------
+-- Diorama Mouse API.
+-- Child of Input API. Available in menus and client.
+-- @field[parent = #inputs] dio#mouse mouse
+
+--------------------------------------------------------------------------------
+-- Mouse X.
+-- Todo: Long description
+-- @field[parent = #mouse] x
+
+--------------------------------------------------------------------------------
+-- Mouse Y.
+-- Todo: Long description
+-- @field[parent = #mouse] y
+
+--------------------------------------------------------------------------------
+-- Left button is clicked.
+-- Todo: Long description
+-- @field[parent = #mouse] left_button_is_clicked
+
+--------------------------------------------------------------------------------
+-- Set mouse inverted.
+-- Todo: Long description
+--
+-- @function [parent=#mouse] setIsInverted
+-- @param #boolean bool Is inverted
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Get mouse inversion state.
+-- Todo: Long description
+--
+-- @function [parent=#mouse] getIsInverted
+-- @return #boolean Is mouse inverted.
+
+--------------------------------------------------------------------------------
+-- Set mouse exclusive.
+-- Todo: Long description
+--
+-- @function [parent=#mouse] setExclusive
+-- @param #boolean bool Is exclusive
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Get mouse scrollwheel delta.
+-- Todo: Long description
+--
+-- @function [parent=#mouse] getScrollWheelDelta
+-- @return Unknown.
+
+
+--------------------------------------------------------------------------------
+-- Diorama Keys API.
+-- Child of Input API. Available in menus and client.
+-- @field[parent = #inputs] dio#keys keys
+
+--------------------------------------------------------------------------------
+-- Get key code from string.
+-- Todo: Long description
+--
+-- @function [parent=#keys] keyCodeFromString
+-- @param #string string String to turn into key code
+-- @return #keyCodes Key code
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Mod API.
+-- Available in client and server. 
+-- @field[parent = #dio] dio#mods mods
+
+--------------------------------------------------------------------------------
+-- Load a mod.
+-- Todo: Long description
+--
+-- @function [parent=#mods] load
+-- @param #string modName Name of the mod to load
+-- @param #table permissionsAllowed Permissions the mod is allowed to use
+-- @return Unknown.
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Server Chat API.
+-- Available in server. 
+-- @field[parent = #dio] dio#serverChat serverChat
+
+--------------------------------------------------------------------------------
+-- Send a server message.
+-- Todo: Long description
+--
+-- @function [parent=#serverChat] send
+-- @param #number target I assume this is a player index
+-- @param #string message Message to send
+-- @return Unknown.
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama Session API.
+-- Available in menus. 
+-- @field[parent = #dio] dio#session session
+
+--------------------------------------------------------------------------------
+-- Begin a singleplayer session.
+-- Todo: Long description
+--
+-- @function [parent=#session] beginSp
+-- @param #table worldSettingsTable World settings
+-- @param #table roomSettingsTable Room settings
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Begin a multiplayer session.
+-- Todo: Long description
+--
+-- @function [parent=#session] beginMp
+-- @param #table settingsTable Player settings
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Terminate session.
+-- Todo: Long description
+--
+-- @function [parent=#session] terminate
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Has session terminated.
+-- Todo: Long description
+--
+-- @function [parent=#session] hasTerminated
+-- @return #boolean Has session terminated
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama System API.
+-- Available in menus, client and server. 
+-- @field[parent = #dio] dio#system system
+
+--------------------------------------------------------------------------------
+-- Get version.
+-- Todo: Long description
+--
+-- @function [parent=#system] getVersion
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Should app close.
+-- Todo: Long description
+--
+-- @function [parent=#system] shouldAppClose
+-- @return #boolean I assume this is a boolean
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Diorama World API.
+-- Available in client and server. 
+-- @field[parent = #dio] dio#world world
+
+--------------------------------------------------------------------------------
+-- Get player location information.
+-- Includes position, chunk position and rotation.
+--
+-- @function [parent=#world] getPlayerXyz
+-- @return #table If I remember correctly
+
+--------------------------------------------------------------------------------
+-- Set player location information.
+-- Location table should include position, chunk position and rotation.
+--
+-- @function [parent=#world] setPlayerXyz
+-- @param #table This should probably take a table containing location info
+-- @return Unknown.
+
+--------------------------------------------------------------------------------
+-- Get player names.
+-- Get names of all players currently on the server
+--
+-- @function [parent=#world] getPlayerNames
+-- @return #table Contains all player names on the server
+
+return nil
